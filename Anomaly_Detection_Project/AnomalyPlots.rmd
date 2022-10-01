@@ -1,0 +1,112 @@
+---
+title: "Anomaly_Detection_Plots"
+author: "Ethan Tucker"
+date: '2022-09-30'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r Load Data}
+url <- "https://raw.githubusercontent.com/numenta/NAB/master/data/realKnownCause/machine_temperature_system_failure.csv"
+df = read_csv(url)
+
+df %>% glimpse()
+```
+
+```{r initial visualization}
+df %>%
+  ggplot(aes(x = timestamp, y = value)) +
+  geom_line(color = "blue", size = 1) +
+  labs(x = "Timestamp",
+       y = "Temperature",
+       title = "Scatterplot of Temperature Measurements from Sensor")
+```
+
+```{r Temp histogram}
+df %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(fill = "blue") +
+  geom_boxplot(width = 1000, color = "red") +
+  labs(x = "Temperature",
+       y = "Count",
+       title = "Histogram and Boxplot of Temperature")
+
+```
+
+
+```{r F stat calculation}
+F_test <- (12.5736)^2/ (14.7424)^2 
+F_test
+
+alpha <- .025
+
+n1 <- 11373
+n2 <- 11373
+F_cutoff <- qf(alpha/2, n2 - 1, n1 - 1)
+F_cutoff
+```
+
+```{r day/night F stat calculation}
+F_test <- (14.7424)^2/ (14.7424)^2 
+F_test
+
+alpha <- .025
+
+n1 <- 11373
+n2 <- 11373
+F_cutoff <- qf(alpha/2, n2 - 1, n1 - 1)
+F_cutoff
+```
+
+```{r weekday/weekend}
+n1 = 16359
+n2 = 6336
+sigma1 = 12.744
+sigma2 = 16.043
+xbar1 = 86.0831
+xbar2 = 85.5222
+
+#F test
+Fcutoff = qf(.025, n1-1, n2-1)
+Fcutoff
+Fstat = sigma1^2/sigma2^2
+Fstat
+
+# Diff of means
+s.e. = sqrt(sigma1^2/n1 + sigma2^2/n2)
+critvals = qnorm(c(.025, .975))
+region = critvals * s.e.
+region
+stat = xbar1 - xbar2
+stat
+```
+
+
+```{r Visualize PCA Anomalies}
+setwd("C:/Users/first/Desktop/Anomaly_Detection_Project/")
+PCA_anomalies = read_csv("./PCA_Anomalies.csv")
+PCA_anomalies$timestamp = as.POSIXct(PCA_anomalies$timestamp, format = "%m/%d/%Y %H:%M")
+
+title = paste("PCA Predicted Anomalies:", length(PCA_anomalies$timestamp), "Anomalies")
+ggplot() +
+  geom_line(data = df, aes(x = timestamp, y = value), color = "blue") +
+  geom_point(data = PCA_anomalies, aes(x = timestamp, y = temperature), color = "red") +
+  labs(x = "Timestamp",
+       y = "Temperature",
+       title = title)
+
+```
+
+
+
+
+
+
+
+
+
+
