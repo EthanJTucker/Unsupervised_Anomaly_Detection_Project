@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+setwd("C:/Users/first/Desktop/Anomaly_Detection_Project/")
 ```
 
 ```{r Load Data}
@@ -87,7 +88,6 @@ stat
 
 
 ```{r Visualize PCA Anomalies}
-setwd("C:/Users/first/Desktop/Anomaly_Detection_Project/")
 PCA_anomalies = read_csv("./PCA_Anomalies.csv")
 PCA_anomalies$timestamp = as.POSIXct(PCA_anomalies$timestamp, format = "%m/%d/%Y %H:%M")
 
@@ -98,10 +98,21 @@ ggplot() +
   labs(x = "Timestamp",
        y = "Temperature",
        title = title)
-
 ```
 
+```{r Vizualise KMeans Anomalies}
+KMeans_anomalies = read_csv("./KMeans_Anomalies.csv")
+KMeans_anomalies$timestamp = as.POSIXct(KMeans_anomalies$timestamp, format = "%m/%d/%Y %H:%M")
 
+filename = paste(as.character(length(KMeans_anomalies$timestamp)), "KMeans", ".png", sep = "")
+title = paste("KMeans Predicted Anomalies:", length(KMeans_anomalies$timestamp), "Anomalies")
+ggplot() +
+  geom_line(data = df, aes(x = timestamp, y = value), color = "blue") +
+  geom_point(data = KMeans_anomalies, aes(x = timestamp, y = temperature), color = "red") +
+  labs(x = "Timestamp",
+       y = "Temperature",
+       title = title)
+```
 
 
 
