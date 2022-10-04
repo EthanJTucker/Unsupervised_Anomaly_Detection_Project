@@ -11,4 +11,6 @@ ML models used for anomaly detection:
 
 3. Isolation Forest
 
-4. Recurrent Neural Network
+4. LSTM Autoencoder (RNN)
+
+Best models by f1 score were PCA and K-Means with ~ 500 anomalies detected. At 700 models we have a more robust detection of a difficult to detect anomaly at the cost of lower precision.
